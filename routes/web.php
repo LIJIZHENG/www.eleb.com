@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/goodsnews','ApiController@goodsnews');
+Route::get('/goodsaccounts','ApiController@goodsaccounts');
