@@ -14,5 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/goodsnews','ApiController@goodsnews');
-Route::get('/goodsaccounts','ApiController@goodsaccounts');
+//Route::get('/goodsnews','ApiController@goodsnews');
+////Route::get('/goodsaccounts','ApiController@goodsaccounts');
+//Route::get('/login1','RegistController@check1');

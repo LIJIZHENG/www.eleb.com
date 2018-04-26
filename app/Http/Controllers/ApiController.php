@@ -45,10 +45,12 @@ class ApiController extends Controller
         foreach ($menus as $menu){
 
         }
-        $menu_classes=DB::table('menu_classes')->where('id','=',$menu->menuclass_id)->get();
+        $menu->goods_id=$menu->id;
+        $menu_classes=DB::table('menu_classes')->where('goodsnews_id','=',$menu->goodsnews_id)->get();
         foreach ($menu_classes as $menu_class1){
 
         }
+//        dd($menu->menuclass_id);
         $menu_class1->goods_list=$menus;
         $goodsnew->evaluate=$evaluate;
         $goodsnew->commodity=$menu_classes;
