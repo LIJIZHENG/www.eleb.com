@@ -32,7 +32,7 @@ class SmsController extends Controller
            // "product" => "阿里通信"
         );
 //        dd($params);
-       Redis::set('code',1000,$params['TemplateParam']['code']);
+       Redis::set('code_'.$request->tel,$params['TemplateParam']['code'],5*60);
         // fixme 可选: 设置发送短信流水号
       //  $params['OutId'] = "12345";
 
@@ -63,15 +63,15 @@ class SmsController extends Controller
         );
 
     if($content->Message=='OK'){
-
-           echo '{"status": "true",
-      "message": "获取短信验证码成功!"}';
-
+           return [
+               "status"=>"true",
+                "message"=>"获取短信验证码成功!"
+                 ];
     }else{
-       echo '{
-            "status": "false",
-      "message": "获取验证码失败!"
-    }';
+       return [
+            "status"=>"false",
+            "message"=>"获取验证码失败!"
+      ];
     }
     }
 }

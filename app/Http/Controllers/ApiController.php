@@ -13,14 +13,6 @@ class ApiController extends Controller
         return $rows;
     }
     public function goodsaccounts(Request $request){
-        $goodsnews=DB::table('goodsnews')->where('id','=',$request->id)->get();
-        foreach ($goodsnews as $goodsnew){
-
-        }
-        $goodsnew->service_code=4.6;
-        $goodsnew->foods_code=4.4;
-        $goodsnew->high_or_low=true;
-        $goodsnew->h_l_percent=30;
         $evaluate=[
             [
                 "user_id"=> 12344,
@@ -40,20 +32,27 @@ class ApiController extends Controller
                 "send_time"=> 30,
                 "evaluate_details"=> "很好吃"
             ]
-            ];
-        $menus=DB::table('menus')->where('goodsnews_id','=',$goodsnew->id)->get();
-        foreach ($menus as $menu){
+        ];
+        $goodsnews=DB::table('goodsnews')->where('id','=',$request->id)->get();
+        foreach ($goodsnews as $goodsnew){
+            $goodsnew->service_code=4.6;
+            $goodsnew->foods_code=4.4;
+            $goodsnew->high_or_low=true;
+            $goodsnew->h_l_percent=30;
+            $goodsnew->evaluate=$evaluate;
+            $menus=DB::table('menus')->where('goodsnews_id','=',$goodsnew->id)->get();
+            foreach ($menus as $menu){
+                $menu->goods_id=$menu->id;
+            }
 
-        }
-        $menu->goods_id=$menu->id;
-        $menu_classes=DB::table('menu_classes')->where('goodsnews_id','=',$menu->goodsnews_id)->get();
-        foreach ($menu_classes as $menu_class1){
+            //dd($menu);
+            $menu_classes=DB::table('menu_classes')->where('goodsnews_id','=',$menu->goodsnews_id)->get();
+            foreach ($menu_classes as $menu_class1){
+                $menu_class1->goods_list=$menus;
+            }
 
+            $goodsnew->commodity=$menu_classes;
         }
-//        dd($menu->menuclass_id);
-        $menu_class1->goods_list=$menus;
-        $goodsnew->evaluate=$evaluate;
-        $goodsnew->commodity=$menu_classes;
         return json_encode($goodsnew);
     }
 }

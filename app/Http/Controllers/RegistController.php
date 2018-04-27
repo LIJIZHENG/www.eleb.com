@@ -6,47 +6,44 @@ use App\Regist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Validation\Validator;
 
 class RegistController extends Controller
 {
     //
     public function store(Request $request){
-        $this->validate($request,[
-            'username'=>'required|unique:regists',
-            'tel'=>'required|unique:regists'
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'username' => 'required|unique:regists|max:255',
+            'tel' => 'required|unique:regists',
         ],[
-            'username.required'=>'{
-                     "status": "false",
-                     "message": "用户名为空"
-               }',
-             'username.unique'=>'{
-                     "status": "false",
-                     "message": "用户名必须唯一"
-               }',
-            'tel.required'=>'{
-                     "status": "false",
-                     "message": "电话号码不能为空"
-               }',
-            'tel.unique'=>'{
-                     "status": "false",
-                     "message": "电话号码已存在"
-               }'
+            'username.required'=>"用户名不能为空!",
+            'username.unique'=>"用户名已存在!",
+            'username.max'=>'最大长度255!',
+            'tel.required'=>'电话号码不能为空!',
+            'tel.unique'=>'电话号码以存在!'
         ]);
-        if(Redis::get('code')!=$request->sms){
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+             return [
+                "status"=>"false",
+                "message"=>$errors->first()
+            ];
+        }
+        if(Redis::get('code_'.$request->tel)==$request->sms){
             Regist::create([
                     'username'=>$request->username,
                     'tel'=>$request->tel,
                     'password'=>bcrypt($request->password)
             ]);
-                echo '{
-                     "status": "true",
-                     "message": "注册成功"
-               }';
+                return [
+                     "status"=> "true",
+                     "message"=> "注册成功"
+               ];
             }else{
-                echo '{
-                     "status": "false",
-                     "message": "注册失败"
-               }';
+                return [
+                     "status"=>"false",
+                     "message"=>"验证码不正确!"
+               ];
             }
     }
 
@@ -54,15 +51,15 @@ class RegistController extends Controller
         if(Auth::attempt(['username'=>$request->name,'password'=>$request->password])){
             return[
                 'status'=>"true",
-                'message'=>'登录成功'
-                ,'user_id'=>Auth::user()->user_id,
+                'message'=>'登录成功',
+                'user_id'=>Auth::user()->id,
                 'username'=>Auth::user()->username
             ];
         }else{
-            echo '{
-                    "status":"false",
-                    "message":"登录失败",
-                }';
+            return[
+                    "status"=>"false",
+                    "message"=>"登录失败",
+                ];
         }
     }
 }
