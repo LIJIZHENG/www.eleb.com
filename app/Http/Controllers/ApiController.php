@@ -44,15 +44,14 @@ class ApiController extends Controller
             foreach ($menus as $menu){
                 $menu->goods_id=$menu->id;
             }
-
             //dd($menu);
             $menu_classes=DB::table('menu_classes')->where('goodsnews_id','=',$menu->goodsnews_id)->get();
             foreach ($menu_classes as $menu_class1){
                 $menu_class1->goods_list=$menus;
             }
-
             $goodsnew->commodity=$menu_classes;
         }
+
         return json_encode($goodsnew);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Regist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Validation\Validator;
 
@@ -48,18 +49,20 @@ class RegistController extends Controller
     }
 
     public function check(Request $request){
-        if(Auth::attempt(['username'=>$request->name,'password'=>$request->password])){
-            return[
-                'status'=>"true",
-                'message'=>'登录成功',
-                'user_id'=>Auth::user()->id,
-                'username'=>Auth::user()->username
-            ];
-        }else{
-            return[
+            if(Auth::attempt(['username'=>$request->name,'password'=>$request->password,'status'=>0])){
+                return[
+                    'status'=>"true",
+                    'message'=>'登录成功',
+                    'user_id'=>Auth::user()->id,
+                    'username'=>Auth::user()->username
+                ];
+            }else{
+                return[
                     "status"=>"false",
                     "message"=>"登录失败",
                 ];
+            }
         }
-    }
+
+//    }
 }

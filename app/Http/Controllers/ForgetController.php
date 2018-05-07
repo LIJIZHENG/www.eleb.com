@@ -12,7 +12,7 @@ class ForgetController extends Controller
     public function forget(Request $request){
         $users = DB::table('regists')->where('tel','=',$request->tel)->first();
         if($users->username){
-            if(Redis::get('code_'.$request->tel==$request->sms)){
+            if(Redis::get('code_'.$request->tel)==$request->sms){
                 DB::table('regists')
                     ->where('tel','=',$request->tel)
                     ->update(['password' =>bcrypt($request->password)]);
@@ -29,7 +29,7 @@ class ForgetController extends Controller
         }else{
             return[
                 'status'=>'false',
-                'message'=>'改电话号码为被注册请先注册!'
+                'message'=>'改电话号码没被注册请先注册!'
             ];
         }
     }

@@ -11,11 +11,10 @@ class ChangeController extends Controller
 {
     //
     public function change(Request $request){
-        dd($request->newPassword);
-        if (!Hash::check($request->oldPassword,Auth::user()->password)){
+        if (Hash::check($request->oldPassword,Auth::user()->password)){
             DB::table('regists')
                 ->where('id','=',Auth::user()->id)
-                ->update(['password' =>$request->newPassword]);
+                ->update(['password' =>bcrypt($request->newPassword)]);
             return [
                 'status'=>'true',
                 'message'=>'修改成功!'
