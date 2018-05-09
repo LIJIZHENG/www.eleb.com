@@ -101,7 +101,5 @@ class AddorederController extends Controller
             $row->order_address='联系人'.$row->name.'联系电话'.$row->tel.'地址'.$row->provence.$row->city.$row->area.$row->detail_address;
         }
 echo json_encode($rows);
-
-
     }
 }
