@@ -2,14 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Goodsnews;
+use App\SphinxClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
     //
-    public function goodsnews(){
-       $rows=DB::table('goodsnews')->get();
+    public function goodsnews(Request $request){
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);
+//$cl->SetServer ( '10.6.0.6', 9312);
+//$cl->SetServer ( '10.6.0.22', 9312);
+//$cl->SetServer ( '10.8.8.2', 9312);
+        $cl->SetConnectTimeout ( 10 );
+        $cl->SetArrayResult ( true );
+// $cl->SetMatchMode ( SPH_MATCH_ANY);
+        $cl->SetMatchMode ( SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 1000);
+        $info =$request->keyword;
+//        $info ='lijizheng';
+        $res = $cl->Query($info,'shops');//shopstore_search
+//print_r($cl);
+//        dd($res);
+        if($res['total']){
+            $id=[];
+            foreach ($res['matches'] as $match){
+//                $row=Goodsnews::where('id','=',$match['id'])->first();
+//                $rows[]=$row;
+             $id[]=$match['id'];
+            }
+            $rows = DB::table('goodsnews')
+                ->whereIn('id', $id)
+                ->get();
+        }else{
+//            $query=$request->query();
+            $rows=DB::table('goodsnews')->get();
+        }
+
         return $rows;
     }
     public function goodsaccounts(Request $request){
